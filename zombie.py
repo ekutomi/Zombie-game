@@ -1,4 +1,4 @@
-# this is an example of creating a simple game based on turns and strategy, using very basic techniques. 
+# this is an example of creating a simple game based on turns and strategy, using very basic coding techniques.
 # in this game, the player must take boxes and defend keep zombies away. The player can move boxes, but not zombies or walls.
 # Wall = x or ■
 # Zombie = z or ☻
@@ -9,8 +9,8 @@ from random import randint
 from random import choice
 
 def createSquareMap(dimension, boxes, zombies):
-  arr = [["+" for i in range(dimension)] for j in range(dimension)]  
-  
+  arr = [["+" for i in range(dimension)] for j in range(dimension)]
+
   #create external walls
   for i in range(dimension):
     arr[0][i] = "■"
@@ -29,13 +29,13 @@ def createSquareMap(dimension, boxes, zombies):
   for i in range(dimension-1):
     for j in range(dimension-1):
       if arr[i][j] == "■":
-        rand = randint(0,3) 
+        rand = randint(0,3)
         if rand==1:
           arr[i][j+1] = "■"
         elif rand==2:
           arr[i+1][j] = "■"
 
-  #liberate near space
+  # liberate near space
   arr[1][2] = "+"
   arr[2][1] = "+"
 
@@ -88,7 +88,7 @@ def roamFree(x,y,arr):
   return arr
 
 # move player
-def movePlayer(x,y,arr,direction):  
+def movePlayer(x,y,arr,direction):
   if direction == "r":
     newX, newY = x+1, y
   elif direction == "l":
@@ -97,12 +97,12 @@ def movePlayer(x,y,arr,direction):
     newX, newY = x, y-1
   elif direction == "d":
     newX, newY = x, y+1
-  
+
   if arr[newY][newX] == "+":
     arr[newY][newX], arr[y][x] = "☺", "+"
     return True
   elif arr[newY][newX] == "□":
-    if moveBox(newX,newY,arr,direction):   
+    if moveBox(newX,newY,arr,direction):
       arr[newY][newX], arr[y][x] = "☺", "+"
       return True
   return False
@@ -163,15 +163,12 @@ while True:
   for i in range(1,dimension-1):
     for j in range(1,dimension-1):
       if gameMap[i][j] == "☻":
-        gameMap = roamFree(i,j,gameMap)
+        gameMap = roamFree(j,i,gameMap)
 #      elif gameMap[i][j] == "☺":
         #gameMap = movePlayer(i,j,gameMap,movement)
 #        gameMap = movePlayer(i,j,gameMap,movement)
-  
+
   turn+=1
   printMap(gameMap)
 
   # update map
-
-
-
