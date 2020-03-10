@@ -7,6 +7,7 @@
 
 from random import randint
 from random import choice
+from copy import deepcopy
 
 def createSquareMap(dimension, boxes, zombies):
   arr = [["+" for i in range(dimension)] for j in range(dimension)]
@@ -125,6 +126,42 @@ def moveBox(x,y,arr,direction):
   else:
     return False
 
+# see if there is a path open to any zombie
+def pathToZombie(playerX, playerY, arr):
+    leftSide = 0
+    rightSide = 0
+    upSide = 0
+    downSide = 0
+    if arr[playerY][playerX] == "☻":
+        return 1
+    else:
+        arr[playerY][playerX] = "X"
+        # left
+        if ((arr[playerY][playerX-1] == "+") or (arr[playerY][playerX-1] == "☻")):
+            leftSide = pathToZombie(playerX-1,playerY,arr)
+        # right
+        if ((arr[playerY][playerX+1] == "+") or (arr[playerY][playerX+1] == "☻")):
+            rightSide = pathToZombie(playerX+1,playerY,arr)
+        # down
+        if ((arr[playerY+1][playerX] == "+") or (arr[playerY+1][playerX] == "☻")):
+            upSide = pathToZombie(playerX,playerY+1,arr)
+        # up
+        if ((arr[playerY-1][playerX] == "+") or (arr[playerY-1][playerX] == "☻")):
+            downSide = pathToZombie(playerX,playerY-1,arr)
+        return leftSide+rightSide+upSide+downSide
+
+def isPossible(x, y, k):
+
+    # Minimum moves required
+    minMoves = abs(x) + abs(y)
+
+    # If possible
+    if (k >= minMoves and (k - minMoves) % 2 == 0):
+        return True
+
+    return False
+
+
 print("--- ZOMBIE SURVIVAL GAME ---")
 print("Instructions: r -> move right; l -> move left; u -> move up; d -> move down")
 print('Select a number for size of maze:')
@@ -145,10 +182,9 @@ turn = 1
 playerX = 1
 playerY = 1
 while True:
-  # See winning condition
-  # if win, break, else continue
   print("Turn: " + str(turn))
   direction = input()
+  # move player
   if movePlayer(playerX,playerY,gameMap,direction):
     if direction == "r":
       playerX, playerY = playerX+1, playerY
@@ -158,7 +194,10 @@ while True:
       playerX, playerY = playerX, playerY-1
     elif direction == "d":
       playerX, playerY = playerX, playerY+1
-  # move player
+  # see winning condition
+  searchMap = deepcopy(gameMap)
+  if pathToZombie(playerX,playerY,searchMap) == 0:
+      break
   # move zombie
   for i in range(1,dimension-1):
     for j in range(1,dimension-1):
@@ -167,8 +206,9 @@ while True:
 #      elif gameMap[i][j] == "☺":
         #gameMap = movePlayer(i,j,gameMap,movement)
 #        gameMap = movePlayer(i,j,gameMap,movement)
-
   turn+=1
   printMap(gameMap)
 
   # update map
+printMap(gameMap)
+print("end of game")
